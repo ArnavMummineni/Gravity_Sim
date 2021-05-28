@@ -1,0 +1,24 @@
+{
+	"constants": {
+		"G": 6.6743e-11,
+		"tps": 1e6,
+		"fps": 600,
+		"scale": 1e6
+	},
+	"planets": {
+		"Earth": {
+			"radius": 20,
+			"mass": 5.972e24,
+			"pos": [500e6, 350e6],
+			"velo": [0, -12.77],
+			"color": "green"
+		},
+		"Moon": {
+			"radius": 10,
+			"mass": 7.348e22,
+			"pos": [115e6, 350e6],
+			"velo": [0, 1027.778],
+			"color": [127, 127, 127]
+		}
+	}
+}
