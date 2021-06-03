@@ -1,8 +1,10 @@
+import asyncio
 import math
 from math import cos, sin, sqrt
 from os import getcwd
 from tkinter import Tk, filedialog
 import json
+from asyncio.tasks import wait
 
 
 import keyboard
@@ -238,6 +240,44 @@ if __name__ == '__main__':
     
     paused = False
     end = False
+
+    async def busy_loop(clock, tps):
+        clock.tick_loop(tps)
+
+    async def tick_loop():
+        while not paused and not end:
+            print('tick')
+            advance_1t(True)
+            await busy_loop(tick_clock, tps)
+
+    async def frame_loop():
+        while not end:
+            print('frame')
+            update_window(canvas)
+            await busy_loop(frame_clock, fps)
+    
+    async def get_events():
+        while (events := pygame.event.get()) == []:
+            pass
+        return events
+    
+    async def wait_loop():
+        while not end:
+            for event in await get_events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        paused = not paused
+                    elif event.key == pygame.K_ESCAPE:
+                        end = True
+    
+    async def main():
+        tick = asyncio.create_task(tick_loop())
+        frame = asyncio.create_task(frame_loop())
+        wait = asyncio.create_task(wait_loop())
+
+        await tick
+        await frame
+        await wait
 
     def run():
         global end, paused
