@@ -1,10 +1,9 @@
-import asyncio
 import math
 from math import cos, sin, sqrt
+from multiprocessing import Process, Lock
 from os import getcwd
 from tkinter import Tk, filedialog
 import json
-from asyncio.tasks import wait
 
 
 import keyboard
@@ -16,6 +15,23 @@ import pygame.surfarray as surfarray
 
 
 pygame.init()
+
+
+class AdvancedClock():
+    def __init__(self, fps=None):
+        self._clock = pygame.time.Clock()
+        self._ms_since_tick = 0
+        if fps is not None:
+            self.fps = fps
+    
+    def tick(self):
+        ms_since_tick = self._ms_since_tick
+        self._ms_since_tick = 0
+        return ms_since_tick + self._clock.tick()
+
+    def since_tick(self):
+        self._ms_since_tick += self._clock.tick()
+        return self._ms_since_tick
 
 
 screen = None
@@ -192,9 +208,9 @@ def advance_1t(draw=True):
 if __name__ == '__main__':
     init_window(canvas)
     
-    clock = pygame.time.Clock()
-    tick_clock = pygame.time.Clock()
-    frame_clock = pygame.time.Clock()
+    tick_clock = AdvancedClock()
+    frame_clock = AdvancedClock()
+    event_clock = AdvancedClock()
 
     json_dict = json.load(open(get_json_filepath(), 'r', encoding='UTF-8'))
 
@@ -240,60 +256,23 @@ if __name__ == '__main__':
     
     paused = False
     end = False
-
-    async def tick(clock, tps):
-        clock.tick(tps)
-
-    async def tick_loop():
-        while not paused and not end:
-            print('tick')
-            advance_1t(True)
-            await tick(tick_clock, tps)
-
-    async def frame_loop():
-        while not end:
-            print('frame')
-            update_window(canvas)
-            await tick(frame_clock, fps)
     
-    async def get_events():
-        while (events := pygame.event.get()) == []:
-            pass
-        return events
-    
-    async def wait_loop():
-        while not end:
-            for event in await get_events:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        paused = not paused
-                    elif event.key == pygame.K_ESCAPE:
-                        end = True
-    
-    async def main():
-        tick = asyncio.create_task(tick_loop())
-        frame = asyncio.create_task(frame_loop())
-        wait = asyncio.create_task(wait_loop())
-
-        await tick
-        await frame
-        await wait
-
     def run():
         global end, paused
         while not end:
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        paused = not paused
-                    elif event.key == pygame.K_ESCAPE:
-                        end = True
-            if not paused: advance_update()
-            clock.tick_busy_loop(fps)
+            if event_clock.since_tick() > 5:
+                event_clock.tick()
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_SPACE:
+                            paused = not paused
+                        elif event.key == pygame.K_ESCAPE:
+                            end = True
+            if tick_clock.since_tick() > (1 / tps) and not paused:
+                tick_clock.tick()
+                advance_1t()
+            if frame_clock.since_tick() > (1 / fps) and not paused:
+                frame_clock.tick()
+                update_window(canvas)
     
-    def au_n(n):
-        for _ in range(n):
-            pygame.event.pump()
-            advance_update()
-    
-    # run()
+    run()
