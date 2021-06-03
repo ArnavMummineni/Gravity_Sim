@@ -164,18 +164,6 @@ class CirclePlanet(Planet):
                 ]
             ] = self.color if color is None else color
 
-'''
-def check(radius):
-    c = Circle(radius, 1)
-    count = 0
-    for i in range((radius*2)+1):
-        for j in range((radius*2)+1):
-            if c.pixels[i, j] != ((radius-i)**2 + (radius-j)**2 < radius**2):
-                print(radius, i, j)
-                count += 1
-    return count
-'''
-
 
 planet_list = []
 G = 6.67430 * 10**-11
@@ -227,32 +215,11 @@ if __name__ == '__main__':
                 planet_list.append(CirclePlanet(**json_dict['planets'][planet]))
             elif isinstance(json_dict['planets'], list):
                 planet_list.append(CirclePlanet(**planet))
-    
-##    planet_list.append(
-##        CirclePlanet(
-##            20,
-##            5.972*10**24,
-##            pos=(500*10**6, 350*10**6),
-##            velo=(0, -12.77),
-##            color=colors['green']
-##            )
-##        )
-##    planet_list.append(
-##        CirclePlanet(
-##            10,
-##            7.348*10**22,
-##            pos=(115*10**6, 350*10**6),
-##            velo=(0, 1027.778),
-##            color=[127, 127, 127]
-##            )
-##        )
+
     
     def advance_update(draw=True):
         advance_1t(draw)
         update_window(canvas)
-
-    
-    #keyboard.add_hotkey('a', advance_update)
     
     paused = False
     end = False
