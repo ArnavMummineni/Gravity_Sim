@@ -72,9 +72,8 @@ class Planet():
         self.acceleration = list(acc)
 
     def advance_1t(self):
-        tpf = tps / fps
-        self.velocity = add_with_factor(self.velocity, self.acceleration, tpf)
-        self.pos = add_with_factor(self.pos, self.velocity, tpf)
+        self.velocity = add_with_factor(self.velocity, self.acceleration, spt)
+        self.pos = add_with_factor(self.pos, self.velocity, spt)
 
     def apply_abs_force(self, force, direction):
         self.acceleration[0] += force * sin(direction) / self.mass
@@ -120,8 +119,8 @@ class CirclePlanet(Planet):
             if color in colors:
                 self.color = colors[color]
             else:
-                if len(string) == 7 and string[0] == '#':
-                    arr = [int(string[1:3], 16), int(string[3:5], 16), int(string[5:7], 16)]
+                if len(color) == 7 and color[0] == '#':
+                    arr = [int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16)]
                     if all([0 <= elem < 256 for elem in arr]):
                         self.color = np.array(arr, dtype=np.uint8)
         self.color = colors['white'] if not hasattr(self, 'color') else self.color
@@ -162,7 +161,8 @@ def check(radius):
 
 planet_list = []
 G = 6.67430 * 10**-11
-tps = 5000000
+spt = 1000
+tps = 10
 fps = 120
 scale = 2*10**6
 
@@ -191,12 +191,15 @@ if __name__ == '__main__':
     init_window(canvas)
     
     clock = pygame.time.Clock()
+    tick_clock = pygame.time.Clock()
+    frame_clock = pygame.time.Clock()
 
     json_dict = json.load(open(get_json_filepath(), 'r', encoding='UTF-8'))
 
     if json_dict.get('constants') is not None:
         consts = json_dict.get('constants')
         G = G if consts.get('G') is None else consts['G']
+        spt = spt if consts.get('spt') is None else consts['spt']
         tps = tps if consts.get('tps') is None else consts['tps']
         fps = fps if consts.get('fps') is None else consts['fps']
         scale = scale if consts.get('scale') is None else consts['scale']
@@ -253,4 +256,4 @@ if __name__ == '__main__':
             pygame.event.pump()
             advance_update()
     
-    run()
+    # run()
