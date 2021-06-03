@@ -38,6 +38,7 @@ screen = None
 
 def get_json_filepath():
     m = Tk()
+    m.withdraw()
     filepath = filedialog.askopenfilename(
         initialdir=getcwd() + '\\',
         title='Select a Telegram Export JSON File',
