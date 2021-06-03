@@ -241,20 +241,20 @@ if __name__ == '__main__':
     paused = False
     end = False
 
-    async def busy_loop(clock, tps):
-        clock.tick_loop(tps)
+    async def tick(clock, tps):
+        clock.tick(tps)
 
     async def tick_loop():
         while not paused and not end:
             print('tick')
             advance_1t(True)
-            await busy_loop(tick_clock, tps)
+            await tick(tick_clock, tps)
 
     async def frame_loop():
         while not end:
             print('frame')
             update_window(canvas)
-            await busy_loop(frame_clock, fps)
+            await tick(frame_clock, fps)
     
     async def get_events():
         while (events := pygame.event.get()) == []:
