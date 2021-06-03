@@ -2,8 +2,8 @@
 	"constants": {
 		"G": 6.6743e-11,
 		"spt": 1e5,
-		"tps": 1,
-		"fps": 6,
+		"tps": 100,
+		"fps": 60,
 		"scale": 1e6
 	},
 	"planets": {

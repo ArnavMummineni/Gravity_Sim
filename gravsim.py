@@ -235,10 +235,10 @@ if __name__ == '__main__':
                             paused = not paused
                         elif event.key == pygame.K_ESCAPE:
                             end = True
-            if tick_clock.since_tick() > (1 / tps) and not paused:
+            if tick_clock.since_tick() > (1000 / tps) and not paused:
                 tick_clock.tick()
                 advance_1t()
-            if frame_clock.since_tick() > (1 / fps) and not paused:
+            if frame_clock.since_tick() > (1000 / fps) and not paused:
                 frame_clock.tick()
                 update_window(canvas)
     
