@@ -1,3 +1,4 @@
+import abc
 import math
 from math import cos, sin, sqrt
 from multiprocessing import Process, Lock
@@ -78,7 +79,7 @@ background_color = colors['black']
 def add_with_factor(a1, a2, factor):
     return [a1[0] + a2[0] * factor, a1[1] + a2[1] * factor]
 
-class Planet():
+class Planet(abc.ABC):
     def __init__(self,
             mass,
             pos=(0, 0),
@@ -104,6 +105,7 @@ class Planet():
     def get_direction_to(self, planet):
         return math.atan2((planet.pos[0] - self.pos[0]), (planet.pos[1] - self.pos[1]))
 
+    @abc.abstractmethod
     def draw():
         pass
 
