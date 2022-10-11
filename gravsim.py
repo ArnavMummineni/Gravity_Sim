@@ -238,6 +238,8 @@ if __name__ == '__main__':
                             paused = not paused
                         elif event.key == pygame.K_ESCAPE:
                             end = True
+                    elif event.type == pygame.QUIT:
+                        end = True
             if tick_clock.since_tick() > (1000 / tps) and not paused:
                 tick_clock.tick()
                 advance_1t()
@@ -246,3 +248,5 @@ if __name__ == '__main__':
                 update_window(canvas)
     
     run()
+    pygame.display.quit()
+    pygame.quit()
